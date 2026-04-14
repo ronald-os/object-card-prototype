@@ -236,8 +236,11 @@ function CardMedia({
               bgcolor: 'rgba(44,52,65,0.85)',
               color: tokens.colors.white,
               fontWeight: 500,
-              fontSize: 12,
-              height: 24,
+              fontSize: 14,
+              height: 28,
+              borderRadius: `${tokens.radius.md}px`,
+              px: 1,
+              '& .MuiChip-label': { px: 0 },
               '& .MuiChip-icon': { color: tokens.colors.white },
             }}
             icon={floatingChip.icon as React.ReactElement | undefined}
@@ -361,17 +364,22 @@ function CardChipGroup({ chips }: { chips: CardChip[] }) {
             ) : undefined
           }
           sx={{
-            height: 24,
-            fontSize: 12,
+            height: 28,
+            fontSize: 14,
             fontWeight: 500,
+            lineHeight: 1.43,
+            borderRadius: `${tokens.radius.md}px`,
+            px: 1,
+            py: '3px',
+            '& .MuiChip-label': { px: 0 },
             ...(chip.color === 'error'
               ? {
-                  bgcolor: '#fdecea',
-                  color: '#d32f2f',
-                  '& .MuiChip-icon': { color: '#d32f2f' },
+                  bgcolor: '#fceae7',
+                  color: '#a11606',
+                  '& .MuiChip-icon': { color: '#a11606' },
                 }
               : {
-                  bgcolor: '#e8eaed',
+                  bgcolor: 'rgba(25,30,42,0.08)',
                   color: tokens.colors.textPrimary,
                 }),
           }}
