@@ -36,6 +36,12 @@ const metaRow2: MetaItem[] = [
 
 const SAMPLE_IMG = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80';
 
+const SAMPLE_IMAGES = [
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80',
+];
+
 const primaryText = 'The plumbing in this section of the ceiling is missing a section and is installed in the wrong location.';
 
 // ─── Section Component ───────────────────────────────────────────────────────
@@ -87,7 +93,7 @@ function App() {
               size="large"
               state="default"
               thumbnailAspectRatio="4:3"
-              thumbnailSrc={SAMPLE_IMG}
+              images={SAMPLE_IMAGES}
               primaryText={primaryText}
               chips={sampleChips}
               metaRow1={metaRow1}
@@ -104,7 +110,7 @@ function App() {
               size="large"
               state="hover"
               thumbnailAspectRatio="4:3"
-              thumbnailSrc={SAMPLE_IMG}
+              images={SAMPLE_IMAGES}
               primaryText={primaryText}
               chips={sampleChips}
               metaRow1={metaRow1}
@@ -139,7 +145,7 @@ function App() {
             <ObjectCard
               size="large"
               thumbnailAspectRatio="1:1"
-              thumbnailSrc={SAMPLE_IMG}
+              images={SAMPLE_IMAGES}
               primaryText={primaryText}
               chips={sampleChips}
               metaRow1={metaRow1}
@@ -156,7 +162,7 @@ function App() {
             <ObjectCard
               size="large"
               thumbnailAspectRatio="4:3"
-              thumbnailSrc={SAMPLE_IMG}
+              images={SAMPLE_IMAGES}
               primaryText={primaryText}
               chips={sampleChips}
               metaRow1={metaRow1}
@@ -172,7 +178,7 @@ function App() {
             <ObjectCard
               size="large"
               thumbnailAspectRatio="16:9"
-              thumbnailSrc={SAMPLE_IMG}
+              images={SAMPLE_IMAGES}
               primaryText={primaryText}
               chips={sampleChips}
               metaRow1={metaRow1}
@@ -190,7 +196,7 @@ function App() {
           <ObjectCard
             size="large"
             thumbnailAspectRatio="4:3"
-            thumbnailSrc={SAMPLE_IMG}
+            images={SAMPLE_IMAGES}
             primaryText={primaryText}
             showPlayIcon
             showPagination

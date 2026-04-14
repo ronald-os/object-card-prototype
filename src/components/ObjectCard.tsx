@@ -14,6 +14,8 @@ import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlin
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -56,13 +58,15 @@ export interface ObjectCardProps {
   state?: ObjectCardState;
   /** Thumbnail aspect ratio */
   thumbnailAspectRatio?: ThumbnailAspectRatio;
-  /** Thumbnail image URL */
+  /** Thumbnail image URL (single image) */
   thumbnailSrc?: string;
+  /** Multiple thumbnail images (enables pagination carousel) */
+  images?: string[];
   /** Show play icon overlay on thumbnail */
   showPlayIcon?: boolean;
   /** Show pagination dots on thumbnail */
   showPagination?: boolean;
-  /** Number of pagination dots (active dot is first) */
+  /** Number of pagination dots (active dot is first) — auto-derived from images[] if provided */
   paginationCount?: number;
   /** Show mini sheet overlay on thumbnail */
   showMiniSheet?: boolean;
@@ -117,11 +121,12 @@ const tokens = {
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 
-/** CardMedia — Thumbnail with optional overlays */
+/** CardMedia — Thumbnail with optional overlays and carousel */
 function CardMedia({
   size,
   aspectRatio = '4:3',
   src,
+  images,
   showPlayIcon,
   showPagination,
   paginationCount = 3,
@@ -134,6 +139,7 @@ function CardMedia({
   size: ObjectCardSize;
   aspectRatio?: ThumbnailAspectRatio;
   src?: string;
+  images?: string[];
   showPlayIcon?: boolean;
   showPagination?: boolean;
   paginationCount?: number;
@@ -145,9 +151,28 @@ function CardMedia({
 }) {
   const dimensions = getMediaDimensions(size, aspectRatio);
   const isLarge = size === 'large';
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [isMediaHovered, setIsMediaHovered] = React.useState(false);
+
+  // Resolve images list and pagination
+  const imageList = images ?? (src ? [src] : []);
+  const hasMultipleImages = imageList.length > 1;
+  const dotCount = hasMultipleImages ? imageList.length : paginationCount;
+  const currentSrc = imageList[activeIndex] || src;
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIndex((prev) => (prev - 1 + imageList.length) % imageList.length);
+  };
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIndex((prev) => (prev + 1) % imageList.length);
+  };
 
   return (
     <Box
+      onMouseEnter={() => setIsMediaHovered(true)}
+      onMouseLeave={() => setIsMediaHovered(false)}
       sx={{
         position: 'relative',
         borderRadius: `${tokens.radius.md}px`,
@@ -172,10 +197,10 @@ function CardMedia({
             opacity: 0.6,
           }}
         />
-      ) : src ? (
+      ) : currentSrc ? (
         <Box
           component="img"
-          src={src}
+          src={currentSrc}
           alt=""
           sx={{
             position: 'absolute',
@@ -248,6 +273,50 @@ function CardMedia({
         </Box>
       )}
 
+      {/* Chevron navigation arrows — visible on hover when pagination is enabled */}
+      {showPagination && !isSelected && isLarge && isMediaHovered && hasMultipleImages && (
+        <>
+          <IconButton
+            onClick={handlePrev}
+            size="small"
+            sx={{
+              position: 'absolute',
+              left: 8,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: 32,
+              height: 32,
+              bgcolor: 'rgba(255,255,255,0.8)',
+              color: tokens.colors.textPrimary,
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              zIndex: 2,
+            }}
+          >
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+          <IconButton
+            onClick={handleNext}
+            size="small"
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: 32,
+              height: 32,
+              bgcolor: 'rgba(255,255,255,0.8)',
+              color: tokens.colors.textPrimary,
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              zIndex: 2,
+            }}
+          >
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+        </>
+      )}
+
       {/* Pagination dots */}
       {showPagination && !isSelected && isLarge && (
         <Box
@@ -281,14 +350,15 @@ function CardMedia({
               gap: '4px',
             }}
           >
-            {Array.from({ length: paginationCount }).map((_, i) => (
+            {Array.from({ length: dotCount }).map((_, i) => (
               <Box
                 key={i}
                 sx={{
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  bgcolor: i === 0 ? tokens.colors.white : 'rgba(255,255,255,0.5)',
+                  bgcolor: i === activeIndex ? tokens.colors.white : 'rgba(255,255,255,0.5)',
+                  transition: 'background-color 150ms ease',
                 }}
               />
             ))}
@@ -495,6 +565,7 @@ export function ObjectCard({
   state: stateProp,
   thumbnailAspectRatio = '4:3',
   thumbnailSrc,
+  images,
   showPlayIcon = false,
   showPagination = false,
   paginationCount = 3,
@@ -560,6 +631,7 @@ export function ObjectCard({
         size={size}
         aspectRatio={thumbnailAspectRatio}
         src={thumbnailSrc}
+        images={images}
         showPlayIcon={showPlayIcon}
         showPagination={showPagination}
         paginationCount={paginationCount}
